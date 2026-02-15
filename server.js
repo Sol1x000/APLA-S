@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 ТВОЙ OpenAI ключ вставляем сюда
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = "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";
 
 app.post("/ask", async (req, res) => {
   const question = req.body.question;
