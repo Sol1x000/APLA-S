@@ -9,9 +9,34 @@
 <h1>🤖 AI Personal Learning Assistant</h1>
 
 <input type="text" id="question" placeholder="Задай вопрос..." style="padding:10px;width:80%;border-radius:8px;">
+  <br><br>
+<select id="mode" style="padding:8px;border-radius:8px;">
+  <option value="normal">Normal Mode</option>
+  <option value="simple">Explain Like I'm 10</option>
+</select>
 <br><br>
 
-<button onclick="askAI()" style="padding:10px 20px;border-radius:8px;">Ask AI</button>
+<button onclick= function askAI() {
+  const question = document.getElementById("question").value.toLowerCase();
+  const mode = document.getElementById("mode").value;
+  let answer = "";
+
+  if (question.includes("логарифм")) {
+    if (mode === "simple") {
+      answer = "Логарифм — это способ узнать, в какую степень нужно возвести число.";
+    } else {
+      answer = "Логарифм — это показатель степени, в которую нужно возвести основание.";
+    }
+  }
+  else {
+    answer = "Попробуй задать вопрос по теме математики.";
+  }
+
+  document.getElementById("answer").innerText = answer;
+
+  questionCount++;
+  localStorage.setItem("count", questionCount);
+}style="padding:10px 20px;border-radius:8px;">Ask AI</button>
 
 <div id="answer" style="margin-top:20px;"></div>
 
