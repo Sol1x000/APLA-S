@@ -3,76 +3,147 @@
 <head>
   <title>AI Personal Learning Assistant</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg,#141e30,#243b55);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      margin: auto;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,255,150,0.3);
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 90%;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      background: #00ff88;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #answer {
+      margin-top: 20px;
+      font-size: 18px;
+      min-height: 40px;
+    }
+
+    .progress {
+      margin-top: 15px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
 </head>
-<body style="background:#111;color:white;text-align:center;font-family:Arial;padding:20px;">
 
-<h1>🤖 AI Personal Learning Assistant</h1>
+<body>
 
-<input type="text" id="question" placeholder="Задай вопрос..." style="padding:10px;width:80%;border-radius:8px;">
-  <br><br>
-<select id="mode" style="padding:8px;border-radius:8px;">
+<div class="card">
+
+<h2>🤖 AI Personal Learning Assistant</h2>
+
+<input type="text" id="question" placeholder="Задай вопрос...">
+
+<select id="mode">
   <option value="normal">Normal Mode</option>
   <option value="simple">Explain Like I'm 10</option>
+  <option value="exam">Exam Mode</option>
 </select>
-<br><br>
 
-<button onclick= function askAI() {
+<button onclick="askAI()">Submit</button>
+
+<div id="answer"></div>
+
+<div class="progress" id="progress"></div>
+
+<button onclick="showReport()">📊 Weekly Report</button>
+
+</div>
+
+<script>
+let questionCount = localStorage.getItem("count") || 0;
+let examScore = localStorage.getItem("score") || 0;
+let examIndex = 0;
+
+const examQuestions = [
+  {q:"2+2", a:"4"},
+  {q:"5×3", a:"15"},
+  {q:"10-6", a:"4"},
+  {q:"3²", a:"9"}
+];
+
+function askAI() {
   const question = document.getElementById("question").value.toLowerCase();
   const mode = document.getElementById("mode").value;
   let answer = "";
 
-  if (question.includes("логарифм")) {
-    if (mode === "simple") {
-      answer = "Логарифм — это способ узнать, в какую степень нужно возвести число.";
-    } else {
-      answer = "Логарифм — это показатель степени, в которую нужно возвести основание.";
+  if (mode === "exam") {
+
+    if (examIndex >= examQuestions.length) {
+      answer = "Экзамен завершён 🎉";
+      document.getElementById("progress").innerText =
+        "Финальный балл: " + examScore + "/" + examQuestions.length;
+      return;
     }
-  }
-  else {
-    answer = "Попробуй задать вопрос по теме математики.";
-  }
 
-  document.getElementById("answer").innerText = answer;
+    if (question === "") {
+      answer = "Вопрос: " + examQuestions[examIndex].q;
+    } else {
+      if (question === examQuestions[examIndex].a) {
+        answer = "Правильно ✅";
+        examScore++;
+        localStorage.setItem("score", examScore);
+      } else {
+        answer = "Неправильно ❌ Правильный ответ: " +
+                  examQuestions[examIndex].a;
+      }
+      examIndex++;
+      document.getElementById("progress").innerText =
+        "Прогресс: " + examIndex + "/" + examQuestions.length;
+    }
 
-  questionCount++;
-  localStorage.setItem("count", questionCount);
-}style="padding:10px 20px;border-radius:8px;">Ask AI</button>
+  } else {
 
-<div id="answer" style="margin-top:20px;"></div>
+    if (question.includes("логарифм")) {
+      answer = (mode==="simple")
+        ? "Логарифм — это способ узнать степень числа."
+        : "Логарифм — показатель степени числа.";
+    }
+    else if (question.includes("мат")) {
+      answer = "Математика — наука о числах и формулах.";
+    }
+    else {
+      answer = "Попробуй спросить про математику.";
+    }
 
-<br><br>
-<button onclick="showReport()" style="padding:10px 20px;border-radius:8px;">
-📊 Weekly Report
-</button>
-
-<script>
-let questionCount = localStorage.getItem("count") || 0;
-
-function askAI() {
-  const question = document.getElementById("question").value.toLowerCase();
-  let answer = "";
-
-  if (question.includes("мат")) {
-    answer = "Математика — это наука о числах.";
-  }
-  else if (question.includes("логарифм")) {
-    answer = "Логарифм — это степень, в которую нужно возвести число.";
-  }
-  else if (question.includes("мотивация")) {
-    answer = "Разбей задачу на маленькие шаги.";
-  }
-  else {
-    answer = "Попробуй уточнить вопрос.";
   }
 
   document.getElementById("answer").innerText = answer;
 
   questionCount++;
   localStorage.setItem("count", questionCount);
+
+  document.getElementById("question").value = "";
 }
 
 function showReport() {
-  alert("Ты задал " + questionCount + " вопросов!");
+  alert("Всего вопросов: " + questionCount +
+        "\nБаллы Exam Mode: " + examScore);
 }
 </script>
 
