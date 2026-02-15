@@ -49,12 +49,29 @@
   <div id="answer">Ответ появится здесь...</div>
 
   <script>
-    function askAI() {
-      const question = document.getElementById("question").value;
-      document.getElementById("answer").innerText =
-        "Ты спросил: " + question + "\n\n(Пока AI не подключен)";
-    }
-  </script>
+function askAI() {
+  const question = document.getElementById("question").value.toLowerCase();
+  let answer = "";
+
+  if (question.includes("мат")) {
+    answer = "Математика — это наука о числах. Какую тему объяснить?";
+  }
+  else if (question.includes("логарифм")) {
+    answer = "Логарифм — это степень, в которую нужно возвести число.";
+  }
+  else if (question.includes("мотивация")) {
+    answer = "Разбей задачу на маленькие шаги и начни с простого.";
+  }
+  else {
+    answer = "Интересный вопрос! Попробуй уточнить тему.";
+  }
+
+  document.getElementById("answer").innerText = answer;
+
+  // Сохраняем в память
+  localStorage.setItem("lastQuestion", question);
+}
+</script>
 
 </body>
 </html>
