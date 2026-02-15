@@ -49,6 +49,8 @@
   <div id="answer">Ответ появится здесь...</div>
 
   <script>
+let questionCount = localStorage.getItem("count") || 0;
+
 function askAI() {
   const question = document.getElementById("question").value.toLowerCase();
   let answer = "";
@@ -68,10 +70,18 @@ function askAI() {
 
   document.getElementById("answer").innerText = answer;
 
-  // Сохраняем в память
-  localStorage.setItem("lastQuestion", question);
+  // Счётчик вопросов
+  questionCount++;
+  localStorage.setItem("count", questionCount);
+}
+
+function showReport() {
+  const count = localStorage.getItem("count") || 0;
+  alert("Ты задал " + count + " вопросов!");
 }
 </script>
 
 </body>
+  <br><br>
+<button onclick="showReport()">📊 Weekly Report</button>
 </html>
