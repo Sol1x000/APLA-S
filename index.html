@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>APLA</title>
+  <title>AI Personal Learning Assistant</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -22,7 +22,7 @@
       box-shadow: 0 0 20px rgba(0,255,150,0.3);
     }
 
-    input, button {
+    input, select, button {
       padding: 10px;
       margin-top: 10px;
       width: 90%;
@@ -42,6 +42,12 @@
       font-size: 18px;
       min-height: 40px;
     }
+
+    .progress {
+      margin-top: 15px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
   </style>
 </head>
 
@@ -49,38 +55,95 @@
 
 <div class="card">
 
-<h2>🤖 APLA</h2>
+<h2>🤖 AI Personal Learning Assistant</h2>
 
 <input type="text" id="question" placeholder="Задай вопрос...">
+
+<select id="mode">
+  <option value="normal">Normal Mode</option>
+  <option value="simple">Explain Like I'm 10</option>
+  <option value="exam">Exam Mode</option>
+</select>
 
 <button onclick="askAI()">Submit</button>
 
 <div id="answer"></div>
 
+<div class="progress" id="progress"></div>
+
+<button onclick="showReport()">📊 Weekly Report</button>
+
 </div>
 
 <script>
-async function askAI() {
-  const question = document.getElementById("question").value.trim();
-  if (!question) return;
+let questionCount = localStorage.getItem("count") || 0;
+let examScore = localStorage.getItem("score") || 0;
+let examIndex = 0;
 
-  document.getElementById("answer").innerText = "Идёт загрузка...";
+const examQuestions = [
+  {q:"2+2", a:"4"},
+  {q:"5×3", a:"15"},
+  {q:"10-6", a:"4"},
+  {q:"3²", a:"9"}
+];
 
-  try {
-    const res = await fetch("https://твоя-ссылка-на-сервер/ask", { // <-- сюда вставь свою ссылку на сервер
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ question })
-    });
+function askAI() {
+  const question = document.getElementById("question").value.toLowerCase();
+  const mode = document.getElementById("mode").value;
+  let answer = "";
 
-    const data = await res.json();
-    document.getElementById("answer").innerText = data.answer;
+  if (mode === "exam") {
 
-  } catch (err) {
-    document.getElementById("answer").innerText = "Ошибка соединения с сервером AI";
+    if (examIndex >= examQuestions.length) {
+      answer = "Экзамен завершён 🎉";
+      document.getElementById("progress").innerText =
+        "Финальный балл: " + examScore + "/" + examQuestions.length;
+      return;
+    }
+
+    if (question === "") {
+      answer = "Вопрос: " + examQuestions[examIndex].q;
+    } else {
+      if (question === examQuestions[examIndex].a) {
+        answer = "Правильно ✅";
+        examScore++;
+        localStorage.setItem("score", examScore);
+      } else {
+        answer = "Неправильно ❌ Правильный ответ: " +
+                  examQuestions[examIndex].a;
+      }
+      examIndex++;
+      document.getElementById("progress").innerText =
+        "Прогресс: " + examIndex + "/" + examQuestions.length;
+    }
+
+  } else {
+
+    if (question.includes("логарифм")) {
+      answer = (mode==="simple")
+        ? "Логарифм — это способ узнать степень числа."
+        : "Логарифм — показатель степени числа.";
+    }
+    else if (question.includes("мат")) {
+      answer = "Математика — наука о числах и формулах.";
+    }
+    else {
+      answer = "Попробуй спросить про математику.";
+    }
+
   }
 
+  document.getElementById("answer").innerText = answer;
+
+  questionCount++;
+  localStorage.setItem("count", questionCount);
+
   document.getElementById("question").value = "";
+}
+
+function showReport() {
+  alert("Всего вопросов: " + questionCount +
+        "\nБаллы Exam Mode: " + examScore);
 }
 </script>
 
