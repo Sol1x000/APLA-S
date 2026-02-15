@@ -3,52 +3,24 @@
 <head>
   <title>AI Personal Learning Assistant</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      padding: 20px;
-      background: #111;
-      color: white;
-    }
-
-    input {
-      width: 80%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-    }
-
-    button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      background: #00ff88;
-      cursor: pointer;
-    }
-
-    #answer {
-      margin-top: 20px;
-      padding: 15px;
-      background: #222;
-      border-radius: 10px;
-    }
-  </style>
 </head>
-<body>
+<body style="background:#111;color:white;text-align:center;font-family:Arial;padding:20px;">
 
-  <h1>🤖 AI Personal Learning Assistant</h1>
+<h1>🤖 AI Personal Learning Assistant</h1>
 
-  <input type="text" id="question" placeholder="Задай вопрос...">
-  <br>
-  <button onclick="askAI()">Ask AI</button>
+<input type="text" id="question" placeholder="Задай вопрос..." style="padding:10px;width:80%;border-radius:8px;">
+<br><br>
 
-  <div id="answer">Ответ появится здесь...</div>
+<button onclick="askAI()" style="padding:10px 20px;border-radius:8px;">Ask AI</button>
 
-  <script>
+<div id="answer" style="margin-top:20px;"></div>
+
+<br><br>
+<button onclick="showReport()" style="padding:10px 20px;border-radius:8px;">
+📊 Weekly Report
+</button>
+
+<script>
 let questionCount = localStorage.getItem("count") || 0;
 
 function askAI() {
@@ -56,32 +28,28 @@ function askAI() {
   let answer = "";
 
   if (question.includes("мат")) {
-    answer = "Математика — это наука о числах. Какую тему объяснить?";
+    answer = "Математика — это наука о числах.";
   }
   else if (question.includes("логарифм")) {
     answer = "Логарифм — это степень, в которую нужно возвести число.";
   }
   else if (question.includes("мотивация")) {
-    answer = "Разбей задачу на маленькие шаги и начни с простого.";
+    answer = "Разбей задачу на маленькие шаги.";
   }
   else {
-    answer = "Интересный вопрос! Попробуй уточнить тему.";
+    answer = "Попробуй уточнить вопрос.";
   }
 
   document.getElementById("answer").innerText = answer;
 
-  // Счётчик вопросов
   questionCount++;
   localStorage.setItem("count", questionCount);
 }
 
 function showReport() {
-  const count = localStorage.getItem("count") || 0;
-  alert("Ты задал " + count + " вопросов!");
+  alert("Ты задал " + questionCount + " вопросов!");
 }
 </script>
 
 </body>
-  <br><br>
-<button onclick="showReport()">📊 Weekly Report</button>
 </html>
