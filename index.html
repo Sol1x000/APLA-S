@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Personal Learning Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+      background: #111;
+      color: white;
+    }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background: #00ff88;
+      cursor: pointer;
+    }
+
+    #answer {
+      margin-top: 20px;
+      padding: 15px;
+      background: #222;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🤖 AI Personal Learning Assistant</h1>
+
+  <input type="text" id="question" placeholder="Задай вопрос...">
+  <br>
+  <button onclick="askAI()">Ask AI</button>
+
+  <div id="answer">Ответ появится здесь...</div>
+
+  <script>
+    function askAI() {
+      const question = document.getElementById("question").value;
+      document.getElementById("answer").innerText =
+        "Ты спросил: " + question + "\n\n(Пока AI не подключен)";
+    }
+  </script>
+
+</body>
+</html>
