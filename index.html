@@ -61,7 +61,6 @@
 <select id="mode">
   <option value="normal">Normal Mode</option>
   <option value="simple">Explain Simple</option>
-  <option value="exam">Exam Mode</option>
 </select>
 
 <button onclick="askAI()">Submit</button>
@@ -69,66 +68,24 @@
 <div id="answer"></div>
 <div class="progress" id="progress"></div>
 
-<button onclick="showReport()">📊 Weekly Report</button>
-
 </div>
 
 <script>
 let questionCount = localStorage.getItem("count") || 0;
-let examScore = localStorage.getItem("score") || 0;
-let examIndex = 0;
-
-const examQuestions = [
-  {q:"2+2", a:"4"},
-  {q:"5×3", a:"15"},
-  {q:"10-6", a:"4"},
-  {q:"3²", a:"9"}
-];
 
 function askAI() {
   const question = document.getElementById("question").value.toLowerCase();
   const mode = document.getElementById("mode").value;
   let answer = "";
 
-  if (mode === "exam") {
-
-    if (examIndex >= examQuestions.length) {
-      answer = "Exam finished 🎉";
-      document.getElementById("progress").innerText =
-        "Final score: " + examScore + "/" + examQuestions.length;
-      return;
-    }
-
-    if (question === "") {
-      answer = "Question: " + examQuestions[examIndex].q;
-    } else {
-      if (question === examQuestions[examIndex].a) {
-        answer = "Correct ✅";
-        examScore++;
-        localStorage.setItem("score", examScore);
-      } else {
-        answer = "Wrong ❌ Correct answer: " +
-                  examQuestions[examIndex].a;
-      }
-      examIndex++;
-      document.getElementById("progress").innerText =
-        "Progress: " + examIndex + "/" + examQuestions.length;
-    }
-
+  if (question.includes("log")) {
+    answer = (mode === "simple")
+      ? "Logarithm shows what power a number has."
+      : "A logarithm is the exponent to which a base is raised.";
+  } else if (question.includes("math")) {
+    answer = "Mathematics studies numbers and patterns.";
   } else {
-
-    if (question.includes("log")) {
-      answer = (mode==="simple")
-        ? "Logarithm shows what power a number has."
-        : "A logarithm is the exponent to which a base is raised.";
-    }
-    else if (question.includes("math")) {
-      answer = "Mathematics studies numbers and patterns.";
-    }
-    else {
-      answer = "Ask something about math or study topics.";
-    }
-
+    answer = "Ask something about math or study topics.";
   }
 
   document.getElementById("answer").innerText = answer;
@@ -139,10 +96,6 @@ function askAI() {
   document.getElementById("question").value = "";
 }
 
-function showReport() {
-  alert("Total questions: " + questionCount +
-        "\nExam score: " + examScore);
-}
 </script>
 
 </body>
