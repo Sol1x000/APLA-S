@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AI Translator</title>
+  <title>APLA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       font-family: Arial;
-      background: linear-gradient(135deg,#1d2671,#c33764);
+      background: linear-gradient(135deg,#141e30,#243b55);
       color: white;
       text-align: center;
       padding: 20px;
     }
+
     .card {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
       padding: 20px;
       border-radius: 15px;
       max-width: 400px;
       margin: auto;
     }
+
     input, select, button {
       width: 90%;
       padding: 10px;
@@ -27,14 +29,23 @@
       border: none;
       font-size: 16px;
     }
+
     button {
-      background: #00ffcc;
+      background: #00ff88;
       font-weight: bold;
       cursor: pointer;
     }
-    #result {
+
+    #answer {
       margin-top: 20px;
       font-size: 18px;
+      min-height: 40px;
+    }
+
+    .progress {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -42,65 +53,96 @@
 <body>
 
 <div class="card">
-<h2>🌍 AI Translator</h2>
 
-<input type="text" id="text" placeholder="Enter text...">
+<h2>🤖 APLA</h2>
 
-<select id="fromLang">
-  <option value="ru">Russian</option>
-  <option value="en">English</option>
-  <option value="kz">Kazakh</option>
+<input type="text" id="question" placeholder="Ask your question...">
+
+<select id="mode">
+  <option value="normal">Normal Mode</option>
+  <option value="simple">Explain Simple</option>
+  <option value="exam">Exam Mode</option>
 </select>
 
-<select id="toLang">
-  <option value="en">English</option>
-  <option value="ru">Russian</option>
-  <option value="kz">Kazakh</option>
-</select>
+<button onclick="askAI()">Submit</button>
 
-<button onclick="translateText()">Translate</button>
+<div id="answer"></div>
+<div class="progress" id="progress"></div>
 
-<div id="result"></div>
+<button onclick="showReport()">📊 Weekly Report</button>
+
 </div>
 
 <script>
+let questionCount = localStorage.getItem("count") || 0;
+let examScore = localStorage.getItem("score") || 0;
+let examIndex = 0;
 
-const dictionary = {
-  hello: {ru:"привет", kz:"сәлем"},
-  привет: {en:"hello", kz:"сәлем"},
-  сәлем: {en:"hello", ru:"привет"},
+const examQuestions = [
+  {q:"2+2", a:"4"},
+  {q:"5×3", a:"15"},
+  {q:"10-6", a:"4"},
+  {q:"3²", a:"9"}
+];
 
-  math: {ru:"математика", kz:"математика"},
-  математика: {en:"math", kz:"математика"},
+function askAI() {
+  const question = document.getElementById("question").value.toLowerCase();
+  const mode = document.getElementById("mode").value;
+  let answer = "";
 
-  school: {ru:"школа", kz:"мектеп"},
-  школа: {en:"school", kz:"мектеп"},
-  мектеп: {en:"school", ru:"школа"},
+  if (mode === "exam") {
 
-  book: {ru:"книга", kz:"кітап"},
-  книга: {en:"book", kz:"кітап"},
-  кітап: {en:"book", ru:"книга"}
-};
+    if (examIndex >= examQuestions.length) {
+      answer = "Exam finished 🎉";
+      document.getElementById("progress").innerText =
+        "Final score: " + examScore + "/" + examQuestions.length;
+      return;
+    }
 
-function translateText() {
-  const text = document.getElementById("text").value.toLowerCase();
-  const from = document.getElementById("fromLang").value;
-  const to = document.getElementById("toLang").value;
+    if (question === "") {
+      answer = "Question: " + examQuestions[examIndex].q;
+    } else {
+      if (question === examQuestions[examIndex].a) {
+        answer = "Correct ✅";
+        examScore++;
+        localStorage.setItem("score", examScore);
+      } else {
+        answer = "Wrong ❌ Correct answer: " +
+                  examQuestions[examIndex].a;
+      }
+      examIndex++;
+      document.getElementById("progress").innerText =
+        "Progress: " + examIndex + "/" + examQuestions.length;
+    }
 
-  if (from === to) {
-    document.getElementById("result").innerText = text;
-    return;
-  }
-
-  if (dictionary[text] && dictionary[text][to]) {
-    document.getElementById("result").innerText =
-      dictionary[text][to];
   } else {
-    document.getElementById("result").innerText =
-      "Translation not found in offline dictionary.";
+
+    if (question.includes("log")) {
+      answer = (mode==="simple")
+        ? "Logarithm shows what power a number has."
+        : "A logarithm is the exponent to which a base is raised.";
+    }
+    else if (question.includes("math")) {
+      answer = "Mathematics studies numbers and patterns.";
+    }
+    else {
+      answer = "Ask something about math or study topics.";
+    }
+
   }
+
+  document.getElementById("answer").innerText = answer;
+
+  questionCount++;
+  localStorage.setItem("count", questionCount);
+
+  document.getElementById("question").value = "";
 }
 
+function showReport() {
+  alert("Total questions: " + questionCount +
+        "\nExam score: " + examScore);
+}
 </script>
 
 </body>
