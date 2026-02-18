@@ -1,35 +1,50 @@
-import express from "express";
-import fetch from "node-fetch";
-import cors from "cors";
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const OpenAI = require("openai");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔑 ТВОЙ OpenAI ключ вставляем сюда
-const OPENAI_API_KEY = "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";
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
+// AI endpoint
 app.post("/ask", async (req, res) => {
-  const question = req.body.question;
-
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: question }]
-      })
+    const userMessage = req.body.message;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are APLA (AI Personal Learning Assistant). Answer clearly and help students learn. Always reply in the same language as the user."
+        },
+        { role: "user", content: userMessage }
+      ],
     });
 
-    const data = await response.json();
-    res.json({ answer: data.choices[0].message.content });
-  } catch (err) {
-    res.json({ answer: "Ошибка сервера AI" });
+    res.json({
+      reply: completion.choices[0].message.content,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "AI Error" });
   }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+// Root route
+app.get("/", (req, res) => {
+  res.send("APLA AI Server is running 🚀");
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
+});
